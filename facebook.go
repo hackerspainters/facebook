@@ -109,6 +109,39 @@ func GetUncachedResponse(uri string) (*http.Response, error) {
 
 }
 
+func GetGroupEvents(token *AccessToken, groupId string) string {
+	fmt.Println("Getting photo source")
+	response, err := GetUncachedResponse("https://graph.facebook.com/" + groupId + "?access_token=" + token.Token)
+
+	if err == nil && response != nil {
+
+		body := readHttpBody(response)
+
+		if body != "" {
+
+			object, err := jsonUtil.JsonFromString(body)
+			fmt.Println(object, err)
+
+			if err == nil {
+
+				source, err := object.String("data")
+
+				if err == nil {
+
+					return source
+
+				}
+
+			}
+
+		}
+
+	}
+
+	return ""
+
+}
+
 func getPhotoSource(token *AccessToken, photoId string) string {
 	fmt.Println("Getting photo source")
 	response, err := GetUncachedResponse("https://graph.facebook.com/" + photoId + "?access_token=" + token.Token + "&fields=source")
