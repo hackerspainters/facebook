@@ -110,8 +110,8 @@ func GetUncachedResponse(uri string) (*http.Response, error) {
 }
 
 func GetGroupEvents(token *AccessToken, groupId string) string {
-	fmt.Println("Getting photo source")
-	response, err := GetUncachedResponse("https://graph.facebook.com/" + groupId + "?access_token=" + token.Token)
+	fmt.Println("Getting Group Events")
+	response, err := GetUncachedResponse("https://graph.facebook.com/" + groupId + "/events?access_token=" + token.Token)
 
 	if err == nil && response != nil {
 
