@@ -69,7 +69,7 @@ func GetAccessToken(client_id string, code string, secret string, callbackUri st
 
 func GetMe(token AccessToken) string {
 	fmt.Println("Getting me")
-	response, err := getUncachedResponse("https://graph.facebook.com/me?access_token=" + token.Token)
+	response, err := GetUncachedReaponse("https://graph.facebook.com/me?access_token=" + token.Token)
 
 	if err == nil {
 
@@ -91,7 +91,7 @@ func GetMe(token AccessToken) string {
 	return err.Error()
 }
 
-func getUncachedResponse(uri string) (*http.Response, error) {
+func GetUncachedReaponse(uri string) (*http.Response, error) {
 	fmt.Println("Uncached response GET")
 	request, err := http.NewRequest("GET", uri, nil)
 
@@ -111,7 +111,7 @@ func getUncachedResponse(uri string) (*http.Response, error) {
 
 func getPhotoSource(token *AccessToken, photoId string) string {
 	fmt.Println("Getting photo source")
-	response, err := getUncachedResponse("https://graph.facebook.com/" + photoId + "?access_token=" + token.Token + "&fields=source")
+	response, err := GetUncachedReaponse("https://graph.facebook.com/" + photoId + "?access_token=" + token.Token + "&fields=source")
 
 	if err == nil && response != nil {
 
@@ -142,7 +142,7 @@ func getPhotoSource(token *AccessToken, photoId string) string {
 }
 
 func GetAlbumPhotos(token *AccessToken, albumId string) []string {
-	response, err := getUncachedResponse("https://graph.facebook.com/" + albumId + "/photos?access_token=" + token.Token + "&fields=images&limit=1000")
+	response, err := GetUncachedReaponse("https://graph.facebook.com/" + albumId + "/photos?access_token=" + token.Token + "&fields=images&limit=1000")
 	fmt.Println("Getting album photos")
 	if err == nil && response != nil {
 
@@ -206,7 +206,7 @@ func GetAlbumPhotos(token *AccessToken, albumId string) []string {
 
 func GetPhotos(token *AccessToken) []string {
 	fmt.Println("Getting photos")
-	response, err := getUncachedResponse("https://graph.facebook.com/me/albums?access_token=" + token.Token + "&fields=id")
+	response, err := GetUncachedReaponse("https://graph.facebook.com/me/albums?access_token=" + token.Token + "&fields=id")
 
 	if err == nil && response != nil {
 		var jsonBlob interface{}
