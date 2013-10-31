@@ -109,8 +109,25 @@ func GetUncachedResponse(uri string) (*http.Response, error) {
 
 }
 
-func GetGroupEvents(token *AccessToken, groupId string) string {
-	fmt.Println("Getting Group Events")
+type GroupEvent struct {
+	Data []struct {
+		Name      string
+		StartTime string `json:"start_time"`
+		Timezone  string
+		Location  string
+		Id        string
+	}
+	Paging struct {
+		Cursors struct {
+			After  string
+			Before string
+		}
+	}
+}
+
+func GetGroupEvents(token *AccessToken, groupId string) GroupEvent {
+
+	group_events := GroupEvent{}
 	response, err := GetUncachedResponse("https://graph.facebook.com/" + groupId + "/events?access_token=" + token.Token)
 
 	if err == nil && response != nil {
@@ -118,28 +135,68 @@ func GetGroupEvents(token *AccessToken, groupId string) string {
 		body := readHttpBody(response)
 
 		if body != "" {
-
-			object, err := jsonUtil.JsonFromString(body)
-			fmt.Println(object, err)
-
-			if err == nil {
-
-				source, err := object.String("data")
-
-				if err == nil {
-
-					return source
-
-				}
-
-			}
-
+			b := []byte(body)
+			json.Unmarshal(b, &group_events)
+			return group_events
 		}
 
 	}
 
-	return ""
+	return GroupEvent{}
+}
 
+func GetGroupEventIds(group_events GroupEvent) []string {
+
+	event_ids := make([]string, len(group_events.Data))
+	for i := 0; i < len(group_events.Data); i++ {
+		event_ids[i] = group_events.Data[i].Id
+	}
+
+	return event_ids
+}
+
+type Event struct {
+	Id    string
+	Owner struct {
+		Name    string
+		Id      string
+	}
+	Name            string
+	Description     string
+	StartTime		string
+	TimeZone		string
+	IsDateOnly		bool
+	Location		string
+	Venue struct {
+		Latitude	float64
+		Longitude	float64
+		City		string
+		Country	    string
+		Id			string
+		Street		string
+		Zip		    string
+	}
+	UpdatedTime	    string
+}
+
+func GetEvent(token *AccessToken, eventId string) Event {
+
+	event := Event{}
+	response, err := GetUncachedResponse("https://graph.facebook.com/" + eventId + "?access_token=" + token.Token)
+
+	if err == nil && response != nil {
+
+		body := readHttpBody(response)
+
+		if body != "" {
+			b := []byte(body)
+			json.Unmarshal(b, &event)
+			return event
+		}
+
+	}
+
+	return Event{}
 }
 
 func getPhotoSource(token *AccessToken, photoId string) string {
