@@ -188,12 +188,10 @@ func GetEvent(token *AccessToken, eventId string) Event {
 	if err == nil && response != nil {
 
 		body := readHttpBody(response)
-		fmt.Println(111111, body)
 
 		if body != "" {
 			b := []byte(body)
 			json.Unmarshal(b, &event)
-			fmt.Println(222222, event)
 			return event
 		}
 
